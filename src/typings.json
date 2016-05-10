@@ -1,0 +1,8 @@
+{
+  "ambientDependencies": {
+    "react": "registry:dt/react#0.14.0+20160423065914",
+    "react-bootstrap": "registry:dt/react-bootstrap#0.0.0+20160423135514",
+    "react-dom": "registry:dt/react-dom#0.14.0+20160412154040",
+    "underscore": "registry:dt/underscore#1.7.0+20160505190121"
+  }
+}

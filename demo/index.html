@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<script src="vendor/react.js"></script>
+	<script src="vendor/react-dom.js"></script>
+	<script src="vendor/react-bootstrap.js"></script>
+	<script src="vendor/underscore-min.js"></script>
+	<script src="../build/index.js"></script>
+	<script src="vendor/babel-core.min.js"></script>
+	<link rel="stylesheet" href="vendor/bootstrap.min.css">
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12" id="demo">
+
+			</div>
+		</div>
+	</div>
+
+	<script type="text/babel">
+		ReactDOM.render(
+			<ReactBootstrapFormform.FormForm fields={[
+				{
+					type: 'text',
+					label: 'test'
+				}, {
+					type: 'text',
+					label: 'Username',
+					placeholder: 'Please insert your username here'
+				}, {
+					type: 'password',
+					addonPrepend: 'SECRET'
+				}
+			]}/>,
+			document.getElementById('demo')
+		);
+	</script>
+
+</body>
+</html>
