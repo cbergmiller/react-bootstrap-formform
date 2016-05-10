@@ -1,0 +1,25 @@
+{
+  "name": "react-bootstrap-formform",
+  "version": "0.1.0",
+  "description": "Dynamic form rendering with React-Bootstrap",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cbergmiller/react-bootstrap-formform.git"
+  },
+  "author": "cbergmiller",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cbergmiller/react-bootstrap-formform/issues"
+  },
+  "homepage": "https://github.com/cbergmiller/react-bootstrap-formform#readme",
+  "devDependencies": {
+    "ts-loader": "^0.8.2",
+    "typescript": "^1.8.10",
+    "underscore": "^1.8.3",
+    "webpack": "^1.13.0"
+  }
+}

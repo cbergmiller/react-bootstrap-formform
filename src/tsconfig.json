@@ -6,6 +6,7 @@
   "files": [
     "typings/browser.d.ts",
     "formform.tsx",
-    "input.tsx"
+    "input.tsx",
+    "select.tsx"
   ]
 }

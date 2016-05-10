@@ -4,11 +4,11 @@ import React = require('react')
 import { Col, FormGroup, ControlLabel, FormControl, InputGroup } from 'react-bootstrap';
 
 
-interface InputProps {
+interface SelectProps {
     label?: string,
     placeholder?: string,
-    type: string,
     name: string,
+    choices: string[][];
     col1?: number,
     col2?: number,
     isHorizontal: boolean,
@@ -18,7 +18,7 @@ interface InputProps {
 }
 
 
-class Input extends React.Component<InputProps, any> {
+class Select extends React.Component<SelectProps, any> {
     constructor(props: any) {
         super(props);
     }
@@ -27,11 +27,12 @@ class Input extends React.Component<InputProps, any> {
         var input, formControl, inputGroup, addonPrepend, addonAppend;
 
         formControl = (
-            <FormControl type={this.props.type} name={this.props.name} placeholder={this.props.placeholder} />
+            <FormControl componentClass="select" name={this.props.name} placeholder={this.props.placeholder}>
+                {this.props.choices.map((choice: string[])=>{
+                    return <option key={choice[0]} value={choice[0]}>{choice[1]}</option>
+                })}
+            </FormControl>
         );
-
-        // ToDo: Refactor Code redundancy between Input and Select
-
         addonPrepend = this.props.addonPrepend ? (
             <InputGroup.Addon>{this.props.addonPrepend}</InputGroup.Addon>
         ) : null;
@@ -70,4 +71,4 @@ class Input extends React.Component<InputProps, any> {
     }
 }
 
-export { Input }
+export { Select }
