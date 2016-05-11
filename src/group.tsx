@@ -4,35 +4,14 @@ import React = require('react')
 import { Col, FormGroup, ControlLabel, FormControl, InputGroup } from 'react-bootstrap';
 
 
-interface SelectProps {
-    label?: string,
-    placeholder?: string,
-    name: string,
-    choices: string[][];
-    col1?: number,
-    col2?: number,
-    isHorizontal: boolean,
-    controlId: any,
-    addonPrepend?: string;
-	addonAppend?: string;
-}
-
-
-class Select extends React.Component<SelectProps, any> {
+class Group extends React.Component<any, any> {
     constructor(props: any) {
         super(props);
     }
 
     render() {
-        var input, formControl, inputGroup, addonPrepend, addonAppend;
-
-        formControl = (
-            <FormControl componentClass="select" name={this.props.name} placeholder={this.props.placeholder}>
-                {this.props.choices.map((choice: string[])=>{
-                    return <option key={choice[0]} value={choice[0]}>{choice[1]}</option>
-                })}
-            </FormControl>
-        );
+        var input, inputGroup, addonPrepend, addonAppend;
+        
         addonPrepend = this.props.addonPrepend ? (
             <InputGroup.Addon>{this.props.addonPrepend}</InputGroup.Addon>
         ) : null;
@@ -42,11 +21,11 @@ class Select extends React.Component<SelectProps, any> {
         inputGroup = (
             <InputGroup>
                 {addonPrepend}
-                {formControl}
+                {this.props.children}
                 {addonAppend}
             </InputGroup>
         );
-        input = (addonPrepend || addonAppend) ? inputGroup : formControl; 
+        input = (addonPrepend || addonAppend) ? inputGroup : this.props.children;
 
         if (!this.props.isHorizontal) {
             return (
@@ -67,8 +46,7 @@ class Select extends React.Component<SelectProps, any> {
                 </FormGroup>
             )
         }
-
     }
 }
 
-export { Select }
+export { Group }

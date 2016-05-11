@@ -14,42 +14,80 @@
 <body>
 	<div class="container">
 		<div class="row">
-			<div class="col-md-12" id="demo">
+			<div class="col-md-12" id="demo" style="margin-top: 20px">
 
 			</div>
 		</div>
 	</div>
 
 	<script type="text/babel">
-		ReactDOM.render(
-			<ReactBootstrapFormform.FormForm isHorizontal col1={2} col2={10} fields={[
-				{
-					type: 'text',
-					label: 'test',
-					name: 'test'
-				}, {
-					type: 'text',
-					label: 'Username',
-					name: 'username',
-					placeholder: 'Please insert your username here'
-				}, {
-					type: 'password',
-					name: 'password',
-					addonPrepend: 'SECRET'
-				}, {
-					name: 'fruit',
-					label: 'Weapon of choice',
-					type: 'select',
-					choices: [
-						[1, 'Apfel'],
-						[2, 'Birne'],
-						[3, 'Orange']
-					],
-					addonAppend: 'Obst'
-				}
-			]}/>,
-			document.getElementById('demo')
-		);
+		var Controller = React.createClass({
+			getInitialState: function () {
+				return {
+					isHorizontal: false,
+					horizontalDropdownTitle: 'default'
+				};
+			},
+			horizontalDropdownTitle: function (eventKey) {
+				this.setState({
+					horizontalDropdownTitle: eventKey,
+					isHorizontal: eventKey == 'horizontal'
+				});
+			},
+			render: function () {
+				return (
+					<div>
+						<ReactBootstrap.Panel header="Control the form" style={{marginBottom: 40}}>
+							<ReactBootstrap.DropdownButton
+									id="horizontalControl"
+									bsStyle="primary"
+									title={this.state.horizontalDropdownTitle}
+									onSelect={this.horizontalDropdownTitle}>
+								<ReactBootstrap.MenuItem eventKey="default">default</ReactBootstrap.MenuItem>
+								<ReactBootstrap.MenuItem eventKey="horizontal">horizontal</ReactBootstrap.MenuItem>
+							</ReactBootstrap.DropdownButton>
+						</ReactBootstrap.Panel>
+
+						<ReactBootstrapFormform.FormForm isHorizontal={this.state.isHorizontal} col1={2} col2={10} fields={[
+							{
+								type: 'text',
+								label: 'test',
+								name: 'test',
+								value: 123
+							}, {
+								type: 'text',
+								label: 'Username',
+								name: 'username',
+								placeholder: 'Please insert your username here'
+							}, {
+								type: 'password',
+								name: 'password',
+								addonPrepend: 'SECRET'
+							}, {
+								name: 'fruit',
+								label: 'Weapon of choice',
+								type: 'multiselect',
+								//value: 2,
+								choices: [
+									[1, 'Apfel'],
+									[2, 'Birne'],
+									[3, 'Orange']
+								],
+								addonAppend: 'Obst'
+							}, {
+								name: 'check1',
+								label: 'Enable',
+								value: true,
+								type: 'checkbox'
+							}
+						]}/>
+
+					</div>
+				);
+			}
+		});
+
+		ReactDOM.render(<Controller />, document.getElementById('demo'));
 	</script>
 
 </body>

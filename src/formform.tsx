@@ -2,10 +2,10 @@
 
 import _ = require('underscore')
 import React = require('react')
-import { Form, FormGroup, ControlLabel, FormControl } from 'react-bootstrap';
+import SyntheticEvent = __React.SyntheticEvent;
+import { Col, Form, FormGroup, ControlLabel, FormControl, Checkbox } from 'react-bootstrap';
 
-import { Input } from './input'
-import { Select } from './select'
+import { Group } from './group'
 
 
 interface FieldConfig {
@@ -30,11 +30,77 @@ interface FormFormProps {
 class FormForm extends React.Component<FormFormProps, any> {
     constructor(props: FormFormProps) {
         super(props);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleMultiChange = this.handleMultiChange.bind(this);
+        this.handleClick = this.handleClick.bind(this);
+        this.state = {};
+        // copy values into the initial state
+        _.each(props.fields, (field: FieldConfig)=>{
+            var value = field.value;
+            // use default if value is undefinied
+            if (_.isUndefined(value)) {
+                switch (field.type) {
+                    case 'text':
+                    case 'password':
+                    case 'number':
+                    case 'hidden':
+                        value = '';
+                        break;
+                    case 'select':
+                        if (field.choices) value = field.choices[0][0];
+                        break;
+                    case 'multiselect':
+                        value = [];
+                        break;
+                    case 'checkbox':
+                        value = false;
+                        break;
+                    default:
+                        value = '';
+                }
+            }
+            this.state[field.name] = value;
+        });
+    }
+
+    componentWillReceiveProps(nextProps: any) {
+        // ToDo: merge new value into state
+    }
+
+    handleChange(event: SyntheticEvent) {
+        console.log('handleChange', event.target)
+        this.setStateValue(event.target.name, event.target.value);
+    }
+
+    handleMultiChange(event: SyntheticEvent) {
+        var values, options;
+        console.log('handleMultiChange', event.target)
+        options = event.target.options;
+        values = [];
+        _.each(event.target.options, (option)=>{
+            if (option.selected) values.push(option.value);
+        });
+        this.setStateValue(event.target.name, values);
+    }
+
+    handleClick(event: SyntheticEvent) {
+        console.log('handleClick', event.target)
+        this.setStateValue(event.target.name, !this.state[event.target.name])
+    }
+
+    setStateValue(name: string, value: any) {
+        var obj = {};
+        obj[name] = value;
+        this.setState(obj);
+
+        setTimeout(()=>{
+            console.log(this.state)
+        }, 0)
     }
 
     render() {
         var fields = [];
-        _.each(this.props.fields, (fieldConfig: FieldConfig)=>{
+        _.each(this.props.fields, (fieldConfig: FieldConfig, index)=>{
             var field, props;
 
             props = {
@@ -42,7 +108,8 @@ class FormForm extends React.Component<FormFormProps, any> {
                 key: fieldConfig.name || fieldConfig.label,
                 col1: this.props.col1,
                 col2: this.props.col2,
-                controlId: _.uniqueId('formform')
+                controlId: index.toString(),
+                onChange: this.handleChange,
             };
             _.extend(props, fieldConfig);
             switch (fieldConfig.type) {
@@ -50,10 +117,72 @@ class FormForm extends React.Component<FormFormProps, any> {
                 case 'password':
                 case 'number':
                 case 'hidden':
-                    field = <Input {...props} />;
+                    props.value = this.state[fieldConfig.name];
+                    field = (
+                        <Group {...props}>
+                            <FormControl
+                                type={props.type}
+                                name={props.name}
+                                value={props.value}
+                                placeholder={props.placeholder}
+                                onChange={this.handleChange}
+                            />
+                        </Group>                        
+                    );
                     break;
                 case 'select':
-                    field = <Select {...props} />;
+                case 'multiselect':
+                    props.value = this.state[fieldConfig.name];
+                    if (fieldConfig.type == 'multiselect') {
+                        props.multiple = true;
+                        props.onChange = this.handleMultiChange;
+                    } else {
+                        props.multiple = false;
+                        props.onChange = this.handleChange;
+                    }
+
+                    field = (
+                        <Group {...props}>
+                            <FormControl
+                                componentClass="select"
+                                name={props.name}
+                                value={props.value}
+                                placeholder={props.placeholder}
+                                onChange={props.onChange}
+                                multiple={props.multiple}>
+                                {props.choices.map((choice: string[])=>{
+                                    return <option key={choice[0]} value={choice[0]}>{choice[1]}</option>
+                                })}
+                            </FormControl>
+                        </Group>                        
+                    );
+                    break;
+                case 'checkbox':
+                    if (this.state[fieldConfig.name]) props.checked = true;
+                    field = (
+                        <Checkbox {...props} onClick={this.handleClick} onChange={()=>{}}>
+                            {props.label}
+                        </Checkbox>
+                    );
+                    if (this.props.isHorizontal) {
+                        field = (
+                            <FormGroup key={props.key}>
+                                <Col smOffset={this.props.col1} sm={this.props.col2}>
+                                    {field}
+                                </Col>
+                            </FormGroup>
+                        );
+                    }
+                    break;
+                case 'static':
+                    field = (
+                        <Group {...props}>
+                            <FormControl.Static>
+                                {fieldConfig.value}
+                            </FormControl.Static>
+                        </Group>
+                    );
+                    break;
             }
             fields.push(field);
         });
