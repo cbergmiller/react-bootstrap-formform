@@ -11,13 +11,19 @@ class Group extends React.Component<any, any> {
 
     render() {
         var input, inputGroup, addonPrepend, addonAppend;
-        
-        addonPrepend = this.props.addonPrepend ? (
-            <InputGroup.Addon>{this.props.addonPrepend}</InputGroup.Addon>
-        ) : null;
-        addonAppend = this.props.addonAppend ? (
-            <InputGroup.Addon>{this.props.addonAppend}</InputGroup.Addon>
-        ) : null;
+
+        if (this.props.type != 'static') {
+            addonPrepend = this.props.addonPrepend ? (
+                <InputGroup.Addon>{this.props.addonPrepend}</InputGroup.Addon>
+            ) : null;
+            addonAppend = this.props.addonAppend ? (
+                <InputGroup.Addon>{this.props.addonAppend}</InputGroup.Addon>
+            ) : null;
+        } else {
+            addonPrepend = null;
+            addonAppend = null;
+        }
+
         inputGroup = (
             <InputGroup>
                 {addonPrepend}

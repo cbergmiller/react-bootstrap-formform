@@ -15,7 +15,7 @@ interface FieldConfig {
 	addonPrepend?: string;
 	addonAppend?: string;
 	value?: any;
-	choices?: Array<Array<string>>;
+	choices?: string[][];
     placeholder?: string;
 	helpText?: string;
 }
@@ -25,6 +25,7 @@ interface FormFormProps {
     isHorizontal: boolean,
     col1?: number,
     col2?: number,
+    isStatic: boolean,
 }
 
 class FormForm extends React.Component<FormFormProps, any> {
@@ -40,12 +41,6 @@ class FormForm extends React.Component<FormFormProps, any> {
             // use default if value is undefinied
             if (_.isUndefined(value)) {
                 switch (field.type) {
-                    case 'text':
-                    case 'password':
-                    case 'number':
-                    case 'hidden':
-                        value = '';
-                        break;
                     case 'select':
                         if (field.choices) value = field.choices[0][0];
                         break;
@@ -98,6 +93,17 @@ class FormForm extends React.Component<FormFormProps, any> {
         }, 0)
     }
 
+    /*
+     * Get the display string of a choice value.
+     */
+    static getChoiceDisplay(value: any, choices: any[][]): any {
+        var choice = _.find(choices, (choice: any[])=>{
+            return choice[0] == value
+        });
+        if (choice) return choice[1];
+        return ''
+    }
+
     render() {
         var fields = [];
         _.each(this.props.fields, (fieldConfig: FieldConfig, index)=>{
@@ -111,45 +117,44 @@ class FormForm extends React.Component<FormFormProps, any> {
                 controlId: index.toString(),
                 onChange: this.handleChange,
             };
-            _.extend(props, fieldConfig);
-            switch (fieldConfig.type) {
+            _.extend(props, fieldConfig, {
+                value: this.state[fieldConfig.name],
+                checked: this.state[fieldConfig.name] == true,
+            });
+
+            // isStatic override
+            if (this.props.isStatic) {
+                switch (props.type) {
+                    case 'select':
+                        props.value = FormForm.getChoiceDisplay(props.value, props.choices);
+                        break;
+                }
+                props.type = 'static';
+            }
+            switch (props.type) {
                 case 'text':
                 case 'password':
                 case 'number':
                 case 'hidden':
-                    props.value = this.state[fieldConfig.name];
+                case 'textarea':
+                    if (props.type == 'textarea') {
+                        props.componentClass = 'textarea';
+                    }
                     field = (
                         <Group {...props}>
-                            <FormControl
-                                type={props.type}
-                                name={props.name}
-                                value={props.value}
-                                placeholder={props.placeholder}
-                                onChange={this.handleChange}
-                            />
+                            <FormControl {...props}/>
                         </Group>                        
                     );
                     break;
                 case 'select':
                 case 'multiselect':
-                    props.value = this.state[fieldConfig.name];
-                    if (fieldConfig.type == 'multiselect') {
+                    if (props.type == 'multiselect') {
                         props.multiple = true;
                         props.onChange = this.handleMultiChange;
-                    } else {
-                        props.multiple = false;
-                        props.onChange = this.handleChange;
                     }
-
                     field = (
                         <Group {...props}>
-                            <FormControl
-                                componentClass="select"
-                                name={props.name}
-                                value={props.value}
-                                placeholder={props.placeholder}
-                                onChange={props.onChange}
-                                multiple={props.multiple}>
+                            <FormControl {...props} componentClass="select">
                                 {props.choices.map((choice: string[])=>{
                                     return <option key={choice[0]} value={choice[0]}>{choice[1]}</option>
                                 })}
@@ -158,9 +163,10 @@ class FormForm extends React.Component<FormFormProps, any> {
                     );
                     break;
                 case 'checkbox':
-                    if (this.state[fieldConfig.name]) props.checked = true;
+                    props.onClick = this.handleClick;
+                    props.onChange = ()=>{};
                     field = (
-                        <Checkbox {...props} onClick={this.handleClick} onChange={()=>{}}>
+                        <Checkbox {...props}>
                             {props.label}
                         </Checkbox>
                     );
@@ -178,7 +184,7 @@ class FormForm extends React.Component<FormFormProps, any> {
                     field = (
                         <Group {...props}>
                             <FormControl.Static>
-                                {fieldConfig.value}
+                                {props.value}
                             </FormControl.Static>
                         </Group>
                     );

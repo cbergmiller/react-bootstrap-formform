@@ -25,32 +25,58 @@
 			getInitialState: function () {
 				return {
 					isHorizontal: false,
-					horizontalDropdownTitle: 'default'
+					isStatic: false
 				};
 			},
-			horizontalDropdownTitle: function (eventKey) {
+			changeHorizontal: function (eventKey) {
 				this.setState({
-					horizontalDropdownTitle: eventKey,
-					isHorizontal: eventKey == 'horizontal'
+					isHorizontal: eventKey
+				});
+			},
+			changeStatic: function (eventKey) {
+				this.setState({
+					isStatic: eventKey
 				});
 			},
 			render: function () {
 				return (
 					<div>
 						<ReactBootstrap.Panel header="Control the form" style={{marginBottom: 40}}>
-							<ReactBootstrap.DropdownButton
-									id="horizontalControl"
-									bsStyle="primary"
-									title={this.state.horizontalDropdownTitle}
-									onSelect={this.horizontalDropdownTitle}>
-								<ReactBootstrap.MenuItem eventKey="default">default</ReactBootstrap.MenuItem>
-								<ReactBootstrap.MenuItem eventKey="horizontal">horizontal</ReactBootstrap.MenuItem>
-							</ReactBootstrap.DropdownButton>
+							<ReactBootstrap.ButtonGroup style={{marginRight: 40}}>
+								<ReactBootstrap.Button bsStyle="primary">
+									horizontal
+								</ReactBootstrap.Button>
+								<ReactBootstrap.DropdownButton
+										id="horizontalControl"
+										bsStyle="primary"
+										title={this.state.isHorizontal ? 'true' : 'false'}
+										onSelect={this.changeHorizontal}>
+									<ReactBootstrap.MenuItem eventKey={false}>false</ReactBootstrap.MenuItem>
+									<ReactBootstrap.MenuItem eventKey={true}>true</ReactBootstrap.MenuItem>
+								</ReactBootstrap.DropdownButton>
+							</ReactBootstrap.ButtonGroup>
+							<ReactBootstrap.ButtonGroup>
+								<ReactBootstrap.Button bsStyle="primary">
+									static
+								</ReactBootstrap.Button>
+								<ReactBootstrap.DropdownButton
+										id="staticControl"
+										bsStyle="primary"
+										title={this.state.isStatic ? 'true' : 'false'}
+										onSelect={this.changeStatic}>
+									<ReactBootstrap.MenuItem eventKey={false}>false</ReactBootstrap.MenuItem>
+									<ReactBootstrap.MenuItem eventKey={true}>true</ReactBootstrap.MenuItem>
+								</ReactBootstrap.DropdownButton>
+							</ReactBootstrap.ButtonGroup>
 						</ReactBootstrap.Panel>
 
-						<ReactBootstrapFormform.FormForm isHorizontal={this.state.isHorizontal} col1={2} col2={10} fields={[
+						<ReactBootstrapFormform.FormForm
+								isHorizontal={this.state.isHorizontal}
+								isStatic={this.state.isStatic}
+								col1={2} col2={10}
+								fields={[
 							{
-								type: 'text',
+								type: 'textarea',
 								label: 'test',
 								name: 'test',
 								value: 123
@@ -62,11 +88,12 @@
 							}, {
 								type: 'password',
 								name: 'password',
+								label: 'password',
 								addonPrepend: 'SECRET'
 							}, {
 								name: 'fruit',
 								label: 'Weapon of choice',
-								type: 'multiselect',
+								type: 'select',
 								//value: 2,
 								choices: [
 									[1, 'Apfel'],
