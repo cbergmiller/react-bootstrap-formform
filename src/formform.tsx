@@ -14,7 +14,6 @@ interface FieldConfig {
 	label?: string;
 	addonPrepend?: string;
 	addonAppend?: string;
-	value?: any;
 	choices?: string[][];
     placeholder?: string;
 	helpText?: string;
@@ -22,11 +21,12 @@ interface FieldConfig {
 
 interface FormFormProps {
     fields: FieldConfig[],
+    values: any,
     isHorizontal: boolean,
     col1?: number,
     col2?: number,
     isStatic: boolean,
-    onChange: (fields: FieldConfig[])=>void,
+    onChange: (v: any)=>void,
 }
 
 class FormForm extends React.Component<FormFormProps, any> {
@@ -54,23 +54,20 @@ class FormForm extends React.Component<FormFormProps, any> {
     }
 
     handleClick(event: SyntheticEvent) {
-        var fieldConfig, value;
+        var value;
         //console.log('handleClick', event.target)
-        fieldConfig = _.find(this.props.fields, (fieldConfig: FieldConfig)=>{
-            return fieldConfig.name == event.target.name; 
-        });
-        this.callOnChange(event.target.name, !fieldConfig.value)
+        value = this.props.values[event.target.name];
+        this.callOnChange(event.target.name, !value)
     }
 
-    callOnChange(name: string, value: any) {
-        var clonedFields = _.map(this.props.fields, (field: FieldConfig)=>{
-            var _field = _.clone(field);
-            if (_field.name == name) {
-                _field.value = value;
-            }
-            return _field
+    callOnChange(name: string, newValue: any) {
+        var clonedValues = {};
+
+        _.each(this.props.values, (value: any, key: string)=>{
+            clonedValues[key] = _.clone(value);
         });
-        this.props.onChange(clonedFields);
+        clonedValues[name] = newValue;
+        this.props.onChange(clonedValues);
     }
 
     /*
@@ -98,7 +95,13 @@ class FormForm extends React.Component<FormFormProps, any> {
     render() {
         var fields = [];
         _.each(this.props.fields, (fieldConfig: FieldConfig, index)=>{
-            var field, props;
+            var field, props, value;
+
+            if (_.has(this.props.values, fieldConfig.name)) {
+                value = this.props.values[fieldConfig.name];
+            } else {
+                value = null;
+            }
 
             props = {
                 isHorizontal: this.props.isHorizontal,
@@ -107,16 +110,15 @@ class FormForm extends React.Component<FormFormProps, any> {
                 col2: this.props.col2,
                 controlId: index.toString(),
                 onChange: this.handleChange,
-                checked: fieldConfig.value == true,
+                checked: value == true,
                 type: fieldConfig.type,
-                value: fieldConfig.value,
+                value: value,
                 name: fieldConfig.name,
                 choices: fieldConfig.choices,
                 label: fieldConfig.label,
                 addonPrepend: fieldConfig.addonPrepend,
                 addonAppend: fieldConfig.addonAppend,
                 placeholder: fieldConfig.placeholder,
-
             };
             // isStatic override
             if (this.props.isStatic) {
@@ -136,7 +138,7 @@ class FormForm extends React.Component<FormFormProps, any> {
                 case 'number':
                 case 'hidden':
                 case 'textarea':
-                    if (_.isUndefined(props.value)) props.value = '';
+                    if (props.value === null) props.value = '';
                     if (props.type == 'textarea') {
                         props.componentClass = 'textarea';
                     }
@@ -151,9 +153,9 @@ class FormForm extends React.Component<FormFormProps, any> {
                     if (props.type == 'multiselect') {
                         props.multiple = true;
                         props.onChange = this.handleMultiChange;
-                        if (_.isUndefined(props.value)) props.value = [];
+                        if (props.value === null) props.value = [];
                     } else {
-                        if (_.isUndefined(props.value) && props.choices) props.value = props.choices[0][0];
+                        if (props.value === null && props.choices) props.value = props.choices[0][0];
                     }
                     field = (
                         <Group {...props}>
@@ -168,6 +170,7 @@ class FormForm extends React.Component<FormFormProps, any> {
                 case 'checkbox':
                     props.onClick = this.handleClick;
                     props.onChange = ()=>{};
+                    props.value = '';
                     field = (
                         <Checkbox {...props}>
                             {props.label}

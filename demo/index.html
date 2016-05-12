@@ -56,40 +56,9 @@
 				return {
 					isHorizontal: false,
 					isStatic: false,
-					fields: [
-						{
-							type: 'textarea',
-							label: 'test',
-							name: 'test',
-							value: 123
-						}, {
-							type: 'text',
-							label: 'Username',
-							name: 'username',
-							placeholder: 'Please insert your username here'
-						}, {
-							type: 'password',
-							name: 'password',
-							label: 'password',
-							addonPrepend: 'SECRET'
-						}, {
-							name: 'fruit',
-							label: 'Weapon of choice',
-							type: 'multiselect',
-							//value: 2,
-							choices: [
-								[1, 'Apfel'],
-								[2, 'Birne'],
-								[3, 'Orange']
-							],
-							addonAppend: 'Obst'
-						}, {
-							name: 'check1',
-							label: 'Enable',
-							value: true,
-							type: 'checkbox'
-						}
-					]
+					values: {
+						'test': 123
+					}
 				};
 			},
 			changeHorizontal: function (eventKey) {
@@ -102,9 +71,9 @@
 					isStatic: eventKey
 				});
 			},
-			onChange: function (fields) {
+			onChange: function (values) {
 				this.setState({
-					fields: fields
+					values: values
 				});
 			},
 			render: function () {
@@ -127,8 +96,39 @@
 							isHorizontal={this.state.isHorizontal}
 							isStatic={this.state.isStatic}
 							col1={2} col2={10}
-							fields={this.state.fields}
+							values={this.state.values}
 							onChange={this.onChange}
+							fields={[
+								{
+									type: 'textarea',
+									label: 'test',
+									name: 'test'
+								}, {
+									type: 'text',
+									label: 'Username',
+									name: 'username',
+									placeholder: 'Please insert your username here'
+								}, {
+									type: 'password',
+									name: 'password',
+									label: 'password',
+									addonPrepend: 'SECRET'
+								}, {
+									name: 'fruit',
+									label: 'Weapon of choice',
+									type: 'multiselect',
+									choices: [
+										[1, 'Apfel'],
+										[2, 'Birne'],
+										[3, 'Orange']
+									],
+									addonAppend: 'Obst'
+								}, {
+									name: 'check1',
+									label: 'Enable',
+									type: 'checkbox'
+								}
+							]}
 						/>
 					</div>
 				);
