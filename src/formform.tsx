@@ -26,6 +26,7 @@ interface FormFormProps {
     col1?: number,
     col2?: number,
     isStatic: boolean,
+    onChange: (fields: FieldConfig[])=>void,
 }
 
 class FormForm extends React.Component<FormFormProps, any> {
@@ -34,63 +35,42 @@ class FormForm extends React.Component<FormFormProps, any> {
         this.handleChange = this.handleChange.bind(this);
         this.handleMultiChange = this.handleMultiChange.bind(this);
         this.handleClick = this.handleClick.bind(this);
-        this.state = {};
-        // copy values into the initial state
-        _.each(props.fields, (field: FieldConfig)=>{
-            var value = field.value;
-            // use default if value is undefinied
-            if (_.isUndefined(value)) {
-                switch (field.type) {
-                    case 'select':
-                        if (field.choices) value = field.choices[0][0];
-                        break;
-                    case 'multiselect':
-                        value = [];
-                        break;
-                    case 'checkbox':
-                        value = false;
-                        break;
-                    default:
-                        value = '';
-                }
-            }
-            this.state[field.name] = value;
-        });
-    }
-
-    componentWillReceiveProps(nextProps: any) {
-        // ToDo: merge new value into state
     }
 
     handleChange(event: SyntheticEvent) {
-        console.log('handleChange', event.target)
-        this.setStateValue(event.target.name, event.target.value);
+        //console.log('handleChange', event.target)
+        this.callOnChange(event.target.name, event.target.value);
     }
 
     handleMultiChange(event: SyntheticEvent) {
         var values, options;
-        console.log('handleMultiChange', event.target)
+        //console.log('handleMultiChange', event.target)
         options = event.target.options;
         values = [];
         _.each(event.target.options, (option)=>{
             if (option.selected) values.push(option.value);
         });
-        this.setStateValue(event.target.name, values);
+        this.callOnChange(event.target.name, values);
     }
 
     handleClick(event: SyntheticEvent) {
-        console.log('handleClick', event.target)
-        this.setStateValue(event.target.name, !this.state[event.target.name])
+        var fieldConfig, value;
+        //console.log('handleClick', event.target)
+        fieldConfig = _.find(this.props.fields, (fieldConfig: FieldConfig)=>{
+            return fieldConfig.name == event.target.name; 
+        });
+        this.callOnChange(event.target.name, !fieldConfig.value)
     }
 
-    setStateValue(name: string, value: any) {
-        var obj = {};
-        obj[name] = value;
-        this.setState(obj);
-
-        setTimeout(()=>{
-            console.log(this.state)
-        }, 0)
+    callOnChange(name: string, value: any) {
+        var clonedFields = _.map(this.props.fields, (field: FieldConfig)=>{
+            var _field = _.clone(field);
+            if (_field.name == name) {
+                _field.value = value;
+            }
+            return _field
+        });
+        this.props.onChange(clonedFields);
     }
 
     /*
@@ -102,6 +82,17 @@ class FormForm extends React.Component<FormFormProps, any> {
         });
         if (choice) return choice[1];
         return ''
+    }
+
+    static getMultiChoiceDisplay(values: any[], choices: any[][]): any {
+        if (!_.isArray(values)) return '';
+        return _.filter(choices, (choice: any[])=>{
+            return _.find(values, (value: any)=>{
+                return value == choice[0]
+            })
+        }).map((choice: any[])=>{
+            return choice[1]
+        }).join(', ')
     }
 
     render() {
@@ -116,17 +107,25 @@ class FormForm extends React.Component<FormFormProps, any> {
                 col2: this.props.col2,
                 controlId: index.toString(),
                 onChange: this.handleChange,
-            };
-            _.extend(props, fieldConfig, {
-                value: this.state[fieldConfig.name],
-                checked: this.state[fieldConfig.name] == true,
-            });
+                checked: fieldConfig.value == true,
+                type: fieldConfig.type,
+                value: fieldConfig.value,
+                name: fieldConfig.name,
+                choices: fieldConfig.choices,
+                label: fieldConfig.label,
+                addonPrepend: fieldConfig.addonPrepend,
+                addonAppend: fieldConfig.addonAppend,
+                placeholder: fieldConfig.placeholder,
 
+            };
             // isStatic override
             if (this.props.isStatic) {
                 switch (props.type) {
                     case 'select':
                         props.value = FormForm.getChoiceDisplay(props.value, props.choices);
+                        break;
+                    case 'multiselect':
+                        props.value = FormForm.getMultiChoiceDisplay(props.value, props.choices);
                         break;
                 }
                 props.type = 'static';
@@ -137,6 +136,7 @@ class FormForm extends React.Component<FormFormProps, any> {
                 case 'number':
                 case 'hidden':
                 case 'textarea':
+                    if (_.isUndefined(props.value)) props.value = '';
                     if (props.type == 'textarea') {
                         props.componentClass = 'textarea';
                     }
@@ -151,6 +151,9 @@ class FormForm extends React.Component<FormFormProps, any> {
                     if (props.type == 'multiselect') {
                         props.multiple = true;
                         props.onChange = this.handleMultiChange;
+                        if (_.isUndefined(props.value)) props.value = [];
+                    } else {
+                        if (_.isUndefined(props.value) && props.choices) props.value = props.choices[0][0];
                     }
                     field = (
                         <Group {...props}>
