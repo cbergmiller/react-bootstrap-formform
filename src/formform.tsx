@@ -3,7 +3,7 @@
 import _ = require('underscore')
 import React = require('react')
 import SyntheticEvent = __React.SyntheticEvent;
-import { Col, Form, FormGroup, ControlLabel, FormControl, Checkbox } from 'react-bootstrap';
+import { Col, Form, FormGroup, ControlLabel, FormControl, Checkbox, Glyphicon } from 'react-bootstrap';
 
 import { Group } from './group'
 
@@ -129,6 +129,8 @@ class FormForm extends React.Component<FormFormProps, any> {
                     case 'multiselect':
                         props.value = FormForm.getMultiChoiceDisplay(props.value, props.choices);
                         break;
+                    case 'checkbox':
+                        props.value = props.value ? <Glyphicon glyph="check" /> : <Glyphicon glyph="unchecked" />
                 }
                 props.type = 'static';
             }
@@ -203,12 +205,18 @@ class FormForm extends React.Component<FormFormProps, any> {
             return (
                 <form>
                     {fields}
+                    {this.props.children}
                 </form>
             )
         } else {
             return (
                 <Form horizontal>
                     {fields}
+                    <FormGroup>
+                        <Col smOffset={this.props.col1} sm={this.props.col2}>
+                            {this.props.children}
+                        </Col>
+                    </FormGroup>
                 </Form>
             )
         }
