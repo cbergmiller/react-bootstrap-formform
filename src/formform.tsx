@@ -1,32 +1,33 @@
 /// <reference path="typings/browser.d.ts" />
 
-import _ = require('underscore')
-import React = require('react')
+import _ = require('underscore');
+import React = require('react');
 import SyntheticEvent = __React.SyntheticEvent;
 import { Col, Form, FormGroup, ControlLabel, FormControl, Checkbox, Glyphicon } from 'react-bootstrap';
 
-import { Group } from './group'
+import { Group } from './group';
+import { FileInput } from './fileinput';
 
 
 interface FieldConfig {
-	type: string;
-	name: string;
-	label?: string;
-	addonPrepend?: string;
-	addonAppend?: string;
-	choices?: string[][];
+    type: string;
+    name: string;
+    label?: string;
+    addonPrepend?: string;
+    addonAppend?: string;
+    choices?: string[][];
     placeholder?: string;
-	helpText?: string;
+    helpText?: string;
 }
 
 interface FormFormProps {
-    fields: FieldConfig[],
-    values: any,
-    isHorizontal: boolean,
-    col1?: number,
-    col2?: number,
-    isStatic: boolean,
-    onChange: (v: any)=>void,
+    fields: FieldConfig[];
+    values: any;
+    isHorizontal: boolean;
+    col1?: number;
+    col2?: number;
+    isStatic: boolean;
+    onChange: (v: any) => void;
 }
 
 class FormForm extends React.Component<FormFormProps, any> {
@@ -37,33 +38,35 @@ class FormForm extends React.Component<FormFormProps, any> {
         this.handleClick = this.handleClick.bind(this);
     }
 
-    handleChange(event: SyntheticEvent) {
+    handleChange(event: any) {
         //console.log('handleChange', event.target)
         this.callOnChange(event.target.name, event.target.value);
     }
 
-    handleMultiChange(event: SyntheticEvent) {
-        var values, options;
-        //console.log('handleMultiChange', event.target)
+    handleMultiChange(event: any) {
+        let values, options;
+        // console.log('handleMultiChange', event.target)
         options = event.target.options;
         values = [];
-        _.each(event.target.options, (option)=>{
-            if (option.selected) values.push(option.value);
+        _.each(event.target.options, (option) => {
+            if (option.selected) {
+                values.push(option.value);
+            }
         });
         this.callOnChange(event.target.name, values);
     }
 
-    handleClick(event: SyntheticEvent) {
-        var value;
-        //console.log('handleClick', event.target)
+    handleClick(event: any) {
+        let value;
+        // console.log('handleClick', event.target)
         value = this.props.values[event.target.name];
-        this.callOnChange(event.target.name, !value)
+        this.callOnChange(event.target.name, !value);
     }
 
     callOnChange(name: string, newValue: any) {
-        var clonedValues = {};
+        let clonedValues = {};
 
-        _.each(this.props.values, (value: any, key: string)=>{
+        _.each(this.props.values, (value: any, key: string) => {
             clonedValues[key] = _.clone(value);
         });
         clonedValues[name] = newValue;
@@ -74,28 +77,29 @@ class FormForm extends React.Component<FormFormProps, any> {
      * Get the display string of a choice value.
      */
     static getChoiceDisplay(value: any, choices: any[][]): any {
-        var choice = _.find(choices, (choice: any[])=>{
-            return choice[0] == value
+        var choice = _.find(choices, (choice: any[]) => {
+            return choice[0] == value;
         });
         if (choice) return choice[1];
-        return ''
+        return '';
     }
 
     static getMultiChoiceDisplay(values: any[], choices: any[][]): any {
         if (!_.isArray(values)) return '';
-        return _.filter(choices, (choice: any[])=>{
-            return _.find(values, (value: any)=>{
-                return value == choice[0]
-            })
-        }).map((choice: any[])=>{
-            return choice[1]
-        }).join(', ')
+        return _.filter(choices, (choice: any[]) => {
+            return _.find(values, (value: any) => {
+                return value == choice[0];
+            });
+        }).map((choice: any[]) => {
+            return choice[1];
+        }).join(', ');
     }
 
     render() {
-        var fields = [];
-        _.each(this.props.fields, (fieldConfig: FieldConfig, index)=>{
-            var field, props, value;
+        let fields = [];
+        
+        _.each(this.props.fields, (fieldConfig: FieldConfig, index) => {
+            let field, props, value;
 
             if (_.has(this.props.values, fieldConfig.name)) {
                 value = this.props.values[fieldConfig.name];
@@ -130,7 +134,7 @@ class FormForm extends React.Component<FormFormProps, any> {
                         props.value = FormForm.getMultiChoiceDisplay(props.value, props.choices);
                         break;
                     case 'checkbox':
-                        props.value = props.value ? <Glyphicon glyph="check" /> : <Glyphicon glyph="unchecked" />
+                        props.value = props.value ? <Glyphicon glyph="check" /> : <Glyphicon glyph="unchecked" />;
                 }
                 props.type = 'static';
             }
@@ -141,7 +145,7 @@ class FormForm extends React.Component<FormFormProps, any> {
                 case 'hidden':
                 case 'textarea':
                     if (props.value === null) props.value = '';
-                    if (props.type == 'textarea') {
+                    if (props.type === 'textarea') {
                         props.componentClass = 'textarea';
                     }
                     field = (
@@ -152,7 +156,7 @@ class FormForm extends React.Component<FormFormProps, any> {
                     break;
                 case 'select':
                 case 'multiselect':
-                    if (props.type == 'multiselect') {
+                    if (props.type === 'multiselect') {
                         props.multiple = true;
                         props.onChange = this.handleMultiChange;
                         if (props.value === null) props.value = [];
@@ -162,7 +166,7 @@ class FormForm extends React.Component<FormFormProps, any> {
                     field = (
                         <Group {...props}>
                             <FormControl {...props} componentClass="select">
-                                {props.choices.map((choice: string[])=>{
+                                {props.choices.map((choice: string[]) => {
                                     return <option key={choice[0]} value={choice[0]}>{choice[1]}</option>
                                 })}
                             </FormControl>
@@ -171,7 +175,7 @@ class FormForm extends React.Component<FormFormProps, any> {
                     break;
                 case 'checkbox':
                     props.onClick = this.handleClick;
-                    props.onChange = ()=>{};
+                    props.onChange = () => {};
                     props.value = '';
                     field = (
                         <Checkbox {...props}>
@@ -187,6 +191,13 @@ class FormForm extends React.Component<FormFormProps, any> {
                             </FormGroup>
                         );
                     }
+                    break;
+                case 'file':
+                    field = (
+                        <Group {...props}>
+                            <FileInput {...props} />
+                        </Group>
+                    );
                     break;
                 case 'static':
                     field = (
@@ -207,7 +218,7 @@ class FormForm extends React.Component<FormFormProps, any> {
                     {fields}
                     {this.props.children}
                 </form>
-            )
+            );
         } else {
             return (
                 <Form horizontal>
@@ -218,9 +229,9 @@ class FormForm extends React.Component<FormFormProps, any> {
                         </Col>
                     </FormGroup>
                 </Form>
-            )
+            );
         }
     }
 }
 
-export { FormForm }
+export { FormForm, FileInput }

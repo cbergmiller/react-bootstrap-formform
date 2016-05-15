@@ -1,18 +1,28 @@
-/// <reference path="typings/browser.d.ts" />
 
-import React = require('react')
+import React = require('react');
 import { Col, FormGroup, ControlLabel, FormControl, InputGroup } from 'react-bootstrap';
 
 
-class Group extends React.Component<any, any> {
+interface IGroupProps {
+    controlId: string;
+    label: string;
+    isHorizontal: boolean;
+    type: string;
+    addonPrepend: string;
+    addonAppend: string;
+    col1: number;
+    col2: number;
+}
+
+class Group extends React.Component<IGroupProps, any> {
     constructor(props: any) {
         super(props);
     }
 
     render() {
-        var input, inputGroup, addonPrepend, addonAppend;
+        let input, inputGroup, addonPrepend, addonAppend;
 
-        if (this.props.type != 'static') {
+        if (this.props.type !== 'static') {
             addonPrepend = this.props.addonPrepend ? (
                 <InputGroup.Addon>{this.props.addonPrepend}</InputGroup.Addon>
             ) : null;
@@ -39,7 +49,7 @@ class Group extends React.Component<any, any> {
                     <ControlLabel>{this.props.label}</ControlLabel>
                     {input}
                 </FormGroup>
-            )
+            );
         } else {
             return (
                 <FormGroup controlId={this.props.controlId}>
@@ -50,7 +60,7 @@ class Group extends React.Component<any, any> {
                         {input}
                     </Col>
                 </FormGroup>
-            )
+            );
         }
     }
 }

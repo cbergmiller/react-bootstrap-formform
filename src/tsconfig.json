@@ -5,7 +5,9 @@
   },
   "files": [
     "typings/browser.d.ts",
+    "declarations.d.ts",
     "formform.tsx",
-	"group.tsx"
+	"group.tsx",
+    "fileinput.tsx"
   ]
 }

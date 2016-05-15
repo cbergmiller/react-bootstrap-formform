@@ -17,9 +17,16 @@
   },
   "homepage": "https://github.com/cbergmiller/react-bootstrap-formform#readme",
   "devDependencies": {
+    "css-loader": "^0.23.1",
+    "less": "^2.7.1",
+    "less-loader": "^2.2.3",
+    "style-loader": "^0.13.1",
     "ts-loader": "^0.8.2",
     "typescript": "^1.8.10",
     "underscore": "^1.8.3",
     "webpack": "^1.13.0"
+  },
+  "dependencies": {
+    "tslint": "^3.10.2"
   }
 }
