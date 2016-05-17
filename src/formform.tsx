@@ -3,13 +3,13 @@
 import _ = require('underscore');
 import React = require('react');
 import SyntheticEvent = __React.SyntheticEvent;
-import { Col, Form, FormGroup, ControlLabel, FormControl, Checkbox, Glyphicon } from 'react-bootstrap';
+import { Col, Form, FormGroup, ControlLabel, FormControl, Checkbox, Glyphicon, HelpBlock } from 'react-bootstrap';
 
 import { Group } from './group';
 import { FileInput } from './fileinput';
 
 
-interface FieldConfig {
+interface IFieldConfig {
     type: string;
     name: string;
     label?: string;
@@ -18,10 +18,11 @@ interface FieldConfig {
     choices?: string[][];
     placeholder?: string;
     helpText?: string;
+    validationState?: string;
 }
 
-interface FormFormProps {
-    fields: FieldConfig[];
+interface IFormFormProps {
+    fields: IFieldConfig[];
     values: any;
     isHorizontal: boolean;
     col1?: number;
@@ -30,12 +31,33 @@ interface FormFormProps {
     onChange: (v: any) => void;
 }
 
-class FormForm extends React.Component<FormFormProps, any> {
-    constructor(props: FormFormProps) {
+class FormForm extends React.Component<IFormFormProps, any> {
+    constructor(props: IFormFormProps) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
         this.handleMultiChange = this.handleMultiChange.bind(this);
         this.handleClick = this.handleClick.bind(this);
+    }
+
+    /**
+     * Merge an object with validation errors into an existing field-configuration-array.
+     * The FieldConfig-objects are cloned for safe use with the React.Component.setState method.
+     */
+    static mergeValidationMsg(fields: IFieldConfig[], messages: any): IFieldConfig[] {
+        let arr = [];
+
+        _.each(fields, (field: IFieldConfig) => {
+            let _field = _.clone(field);
+
+            if (messages[field.name]) {
+                _.extend(_field, {
+                    helpText: messages[field.name],
+                    validationState: 'error',
+                });
+            }
+            arr.push(_field);
+        });
+        return arr;
     }
 
     handleChange(event: any) {
@@ -48,7 +70,7 @@ class FormForm extends React.Component<FormFormProps, any> {
         // console.log('handleMultiChange', event.target)
         options = event.target.options;
         values = [];
-        _.each(event.target.options, (option) => {
+        _.each(event.target.options, (option: HTMLOptionElement) => {
             if (option.selected) {
                 values.push(option.value);
             }
@@ -98,7 +120,7 @@ class FormForm extends React.Component<FormFormProps, any> {
     render() {
         let fields = [];
         
-        _.each(this.props.fields, (fieldConfig: FieldConfig, index) => {
+        _.each(this.props.fields, (fieldConfig: IFieldConfig, index) => {
             let field, props, value;
 
             if (_.has(this.props.values, fieldConfig.name)) {
@@ -123,6 +145,8 @@ class FormForm extends React.Component<FormFormProps, any> {
                 addonPrepend: fieldConfig.addonPrepend,
                 addonAppend: fieldConfig.addonAppend,
                 placeholder: fieldConfig.placeholder,
+                helpText: fieldConfig.helpText,
+                validationState: fieldConfig.validationState,
             };
             // isStatic override
             if (this.props.isStatic) {
@@ -234,4 +258,4 @@ class FormForm extends React.Component<FormFormProps, any> {
     }
 }
 
-export { FormForm, FileInput }
+export { FormForm, IFieldConfig, FileInput }

@@ -110,17 +110,21 @@
 								{
 									type: 'textarea',
 									label: 'test',
-									name: 'test'
+									name: 'test',
+									helpText: 'Hilfetext',
+									validationState: 'error'
 								}, {
 									type: 'text',
 									label: 'Username',
 									name: 'username',
-									placeholder: 'Please insert your username here'
+									placeholder: 'Please insert your username here',
+									helpText: 'Hilfetext'
 								}, {
 									type: 'password',
 									name: 'password',
 									label: 'password',
-									addonPrepend: 'SECRET'
+									addonPrepend: 'SECRET',
+									helpText: 'Hilfetext'
 								}, {
 									name: 'fruit',
 									label: 'Weapon of choice',
@@ -130,15 +134,18 @@
 										[2, 'Birne'],
 										[3, 'Orange']
 									],
-									addonAppend: 'Obst'
+									addonAppend: 'Obst',
+									helpText: 'Hilfetext'
 								}, {
 									name: 'check1',
 									label: 'Enable',
-									type: 'checkbox'
+									type: 'checkbox',
+									helpText: 'Hilfetext'
 								}, {
 									name: 'file',
 									type: 'file',
-									label: 'file'
+									label: 'file',
+									helpText: 'Hilfetext'
 								}
 							]}>
 							{buttons}
