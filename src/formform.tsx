@@ -59,9 +59,15 @@ class FormForm extends React.Component<IFormFormProps, any> {
         });
         return arr;
     }
+    
+    static getFieldByName(fields: IFieldConfig[], name: string): IFieldConfig {
+        return _.find(fields, (field: IFieldConfig) => {
+            return field.name === name;
+        });
+    }
 
     handleChange(event: any) {
-        //console.log('handleChange', event.target)
+        // console.log('handleChange', event.target)
         this.callOnChange(event.target.name, event.target.value);
     }
 
@@ -98,23 +104,42 @@ class FormForm extends React.Component<IFormFormProps, any> {
     /*
      * Get the display string of a choice value.
      */
-    static getChoiceDisplay(value: any, choices: any[][]): any {
-        var choice = _.find(choices, (choice: any[]) => {
-            return choice[0] == value;
+    static getChoiceDisplay(value: any, choices: any): any {
+        let option;
+
+        _.find(choices, (choice: any) => {
+            if (choice[0] == value) {
+                option = choice;
+                return true;
+            }
+            if (_.isArray(choice[1])) {
+                return _.find(choice[1], (c: any) => {
+                    if (c[0] == value) {
+                        option = c;
+                        return true;
+                    }
+                });
+            }
         });
-        if (choice) return choice[1];
-        return '';
+        return option ? option[1] : '';
     }
 
     static getMultiChoiceDisplay(values: any[], choices: any[][]): any {
-        if (!_.isArray(values)) return '';
-        return _.filter(choices, (choice: any[]) => {
-            return _.find(values, (value: any) => {
-                return value == choice[0];
-            });
-        }).map((choice: any[]) => {
-            return choice[1];
-        }).join(', ');
+        let labels;
+
+        if (!_.isArray(values)) {
+            return '';
+        }
+        labels = [];
+        _.each(values, (value: any) => {
+            let label;
+
+            label = FormForm.getChoiceDisplay(value, choices);
+            if (label) {
+                labels.push(label);
+            }
+        });
+        return labels.join(', ');
     }
 
     render() {
@@ -168,7 +193,9 @@ class FormForm extends React.Component<IFormFormProps, any> {
                 case 'number':
                 case 'hidden':
                 case 'textarea':
-                    if (props.value === null) props.value = '';
+                    if (props.value === null) {
+                        props.value = '';
+                    }
                     if (props.type === 'textarea') {
                         props.componentClass = 'textarea';
                     }
@@ -183,15 +210,37 @@ class FormForm extends React.Component<IFormFormProps, any> {
                     if (props.type === 'multiselect') {
                         props.multiple = true;
                         props.onChange = this.handleMultiChange;
-                        if (props.value === null) props.value = [];
+                        if (props.value === null) {
+                            props.value = [];
+                        }
                     } else {
-                        if (props.value === null && props.choices) props.value = props.choices[0][0];
+                        if (props.value === null) {
+                            // Try to preselect the first choice
+                            if (props.value && !_.isArray(props.choices[0][0])) {
+                                props.value = props.choices[0][0];
+                            } else if (props.value && _.isArray(props.choices[0][0])) {
+                                // Nested optgroup choices
+                                props.value = props.choices[0][1][0][0];
+                            } else {
+                                props.value = '';
+                            }
+                        }
                     }
                     field = (
                         <Group {...props}>
                             <FormControl {...props} componentClass="select">
-                                {props.choices.map((choice: string[]) => {
-                                    return <option key={choice[0]} value={choice[0]}>{choice[1]}</option>
+                                {props.choices.map((choice: any[]) => {
+                                    if (_.isArray(choice[1])) {
+                                        // Nested optgroup choices
+                                        return (
+                                            <optgroup label={choice[0]} key={choice[0]}>
+                                                {choice[1].map((c: any[]) => {
+                                                    return <option key={c[0]} value={c[0]}>{c[1]}</option>;
+                                                })}
+                                            </optgroup>
+                                        );
+                                    }
+                                    return <option key={choice[0]} value={choice[0]}>{choice[1]}</option>;
                                 })}
                             </FormControl>
                         </Group>                        
