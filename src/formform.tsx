@@ -87,7 +87,11 @@ class FormForm extends React.Component<IFormFormProps, any> {
     handleClick(event: any) {
         let value;
         // console.log('handleClick', event.target)
-        value = this.props.values[event.target.name];
+        if (this.props.values) {
+            value = this.props.values[event.target.name];
+        } else {
+            value = false;
+        }
         this.callOnChange(event.target.name, !value);
     }
 
