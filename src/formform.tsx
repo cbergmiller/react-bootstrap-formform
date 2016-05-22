@@ -29,6 +29,8 @@ interface IFormFormProps {
     col2?: number;
     isStatic: boolean;
     onChange: (v: any) => void;
+    onSubmit?: () => void;
+    onFocus?: (name: string) => void;
 }
 
 class FormForm extends React.Component<IFormFormProps, any> {
@@ -37,6 +39,8 @@ class FormForm extends React.Component<IFormFormProps, any> {
         this.handleChange = this.handleChange.bind(this);
         this.handleMultiChange = this.handleMultiChange.bind(this);
         this.handleClick = this.handleClick.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleOnFocus = this.handleOnFocus.bind(this);
     }
 
     /**
@@ -47,17 +51,37 @@ class FormForm extends React.Component<IFormFormProps, any> {
         let arr = [];
 
         _.each(fields, (field: IFieldConfig) => {
-            let _field = _.clone(field);
+            let msg, _field = _.clone(field);
 
-            if (messages[field.name]) {
+            msg = messages[field.name];
+            if (msg) {
+                if (_.isArray(msg)) {
+                    msg = msg[0];
+                }
                 _.extend(_field, {
-                    helpText: messages[field.name],
+                    helpText: msg,
                     validationState: 'error',
+                });
+            } else {
+                // clear previous validation errors
+                _.extend(_field, {
+                    helpText: null,
+                    validationState: null,
                 });
             }
             arr.push(_field);
         });
         return arr;
+    }
+
+    static clearFieldError(fields: IFieldConfig[], name: string): IFieldConfig[] {
+        let field, clonedFields;
+
+        clonedFields = _.clone(fields);
+        field = FormForm.getFieldByName(clonedFields, name);
+        field.helpText = null;
+        field.validationState = null;
+        return clonedFields;
     }
     
     static getFieldByName(fields: IFieldConfig[], name: string): IFieldConfig {
@@ -66,12 +90,12 @@ class FormForm extends React.Component<IFormFormProps, any> {
         });
     }
 
-    handleChange(event: any) {
+    handleChange(event: any): void {
         // console.log('handleChange', event.target)
         this.callOnChange(event.target.name, event.target.value);
     }
 
-    handleMultiChange(event: any) {
+    handleMultiChange(event: any): void {
         let values, options;
         // console.log('handleMultiChange', event.target)
         options = event.target.options;
@@ -84,7 +108,7 @@ class FormForm extends React.Component<IFormFormProps, any> {
         this.callOnChange(event.target.name, values);
     }
 
-    handleClick(event: any) {
+    handleClick(event: any): void {
         let value;
         // console.log('handleClick', event.target)
         if (this.props.values) {
@@ -95,7 +119,7 @@ class FormForm extends React.Component<IFormFormProps, any> {
         this.callOnChange(event.target.name, !value);
     }
 
-    callOnChange(name: string, newValue: any) {
+    callOnChange(name: string, newValue: any): void {
         let clonedValues = {};
 
         _.each(this.props.values, (value: any, key: string) => {
@@ -103,6 +127,18 @@ class FormForm extends React.Component<IFormFormProps, any> {
         });
         clonedValues[name] = newValue;
         this.props.onChange(clonedValues);
+    }
+    
+    handleSubmit(event: any): void {
+        if (this.props.onSubmit) {
+            this.props.onSubmit();
+        }
+    }
+
+    handleOnFocus(event: any): void {
+        if (this.props.onFocus) {
+            this.props.onFocus(event.target.name);
+        }
     }
 
     /*
@@ -205,7 +241,7 @@ class FormForm extends React.Component<IFormFormProps, any> {
                     }
                     field = (
                         <Group {...props}>
-                            <FormControl {...props}/>
+                            <FormControl {...props} onFocus={this.handleOnFocus}/>
                         </Group>                        
                     );
                     break;
@@ -219,15 +255,7 @@ class FormForm extends React.Component<IFormFormProps, any> {
                         }
                     } else {
                         if (props.value === null) {
-                            // Try to preselect the first choice
-                            if (props.value && !_.isArray(props.choices[0][0])) {
-                                props.value = props.choices[0][0];
-                            } else if (props.value && _.isArray(props.choices[0][0])) {
-                                // Nested optgroup choices
-                                props.value = props.choices[0][1][0][0];
-                            } else {
-                                props.value = '';
-                            }
+                            props.value = '';
                         }
                     }
                     field = (
@@ -291,14 +319,14 @@ class FormForm extends React.Component<IFormFormProps, any> {
 
         if (!this.props.isHorizontal) {
             return (
-                <form>
+                <form onSubmit={this.handleSubmit}>
                     {fields}
                     {this.props.children}
                 </form>
             );
         } else {
             return (
-                <Form horizontal>
+                <Form horizontal onSubmit={this.handleSubmit}>
                     {fields}
                     <FormGroup>
                         <Col smOffset={this.props.col1} sm={this.props.col2}>
