@@ -131,6 +131,7 @@ class FormForm extends React.Component<IFormFormProps, any> {
     
     handleSubmit(event: any): void {
         if (this.props.onSubmit) {
+            event.preventDefault();
             this.props.onSubmit();
         }
     }
