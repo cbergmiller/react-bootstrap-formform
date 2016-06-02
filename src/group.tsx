@@ -1,5 +1,5 @@
 
-import React = require('react');
+import * as React from 'react';
 import { Col, FormGroup, ControlLabel, FormControl, InputGroup, HelpBlock } from 'react-bootstrap';
 
 
@@ -49,7 +49,7 @@ class Group extends React.Component<IGroupProps, any> {
         if (!this.props.isHorizontal) {
             return (
                 <FormGroup controlId={this.props.controlId} validationState={this.props.validationState}>
-                    <ControlLabel>{this.props.label}</ControlLabel>
+                    {this.props.label ? <ControlLabel>{this.props.label}</ControlLabel> : null}
                     {input}
                     {help}
                 </FormGroup>

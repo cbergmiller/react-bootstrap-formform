@@ -1,7 +1,7 @@
 /// <reference path="typings/browser.d.ts" />
 
-import _ = require('underscore');
-import React = require('react');
+import * as _ from 'underscore';
+import * as React from 'react';
 import SyntheticEvent = __React.SyntheticEvent;
 import { Col, Form, FormGroup, ControlLabel, FormControl, Checkbox, Glyphicon, HelpBlock } from 'react-bootstrap';
 

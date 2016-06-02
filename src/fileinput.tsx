@@ -1,6 +1,6 @@
 
-import _ = require('underscore');
-import React = require('react');
+import * as _ from 'underscore';
+import * as React from 'react';
 import { Col, Glyphicon, FormGroup, ControlLabel, FormControl, InputGroup } from 'react-bootstrap';
 
 require('./less/fileinput.less');

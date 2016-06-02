@@ -41,7 +41,7 @@ module.exports = {
             loader: 'ts-loader'
         }, {
             test: /\.less$/,
-            loader: "style!css!less"
+            loader: 'style!css!less'
         }]
     },
     resolve: {
