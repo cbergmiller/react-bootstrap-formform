@@ -1,5 +1,3 @@
-/// <reference path="typings/browser.d.ts" />
-
 import * as _ from 'underscore';
 import * as React from 'react';
 import SyntheticEvent = __React.SyntheticEvent;
@@ -9,7 +7,7 @@ import { Group } from './group';
 import { FileInput } from './fileinput';
 
 
-interface IFieldConfig {
+export interface IFieldConfig {
     type: string;
     name: string;
     label?: string;
@@ -21,8 +19,8 @@ interface IFieldConfig {
     validationState?: string;
 }
 
-interface IFormFormProps {
-    fields: IFieldConfig[];
+export interface IFormFormProps {
+    fields: Array<IFieldConfig>;
     values: any;
     isHorizontal: boolean;
     col1?: number;
@@ -33,7 +31,7 @@ interface IFormFormProps {
     onFocus?: (name: string) => void;
 }
 
-class FormForm extends React.Component<IFormFormProps, any> {
+export class FormForm extends React.Component<IFormFormProps, any> {
     constructor(props: IFormFormProps) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
@@ -340,4 +338,4 @@ class FormForm extends React.Component<IFormFormProps, any> {
     }
 }
 
-export { FormForm, IFieldConfig, FileInput }
+export { FileInput }

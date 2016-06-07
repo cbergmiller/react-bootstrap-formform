@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Col, FormGroup, ControlLabel, FormControl, InputGroup, HelpBlock } from 'react-bootstrap';
 
 
-interface IGroupProps {
+export interface IGroupProps {
     controlId: string;
     label: string;
     isHorizontal: boolean;
@@ -16,7 +16,7 @@ interface IGroupProps {
     helpText: string;
 }
 
-class Group extends React.Component<IGroupProps, any> {
+export class Group extends React.Component<IGroupProps, any> {
     constructor(props: any) {
         super(props);
     }
@@ -70,4 +70,3 @@ class Group extends React.Component<IGroupProps, any> {
     }
 }
 
-export { Group }
