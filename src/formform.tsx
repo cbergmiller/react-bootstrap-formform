@@ -81,7 +81,7 @@ export class FormForm extends React.Component<IFormFormProps, any> {
         field.validationState = null;
         return clonedFields;
     }
-    
+
     static getFieldByName(fields: IFieldConfig[], name: string): IFieldConfig {
         return _.find(fields, (field: IFieldConfig) => {
             return field.name === name;
@@ -126,7 +126,7 @@ export class FormForm extends React.Component<IFormFormProps, any> {
         clonedValues[name] = newValue;
         this.props.onChange(clonedValues);
     }
-    
+
     handleSubmit(event: any): void {
         if (this.props.onSubmit) {
             event.preventDefault();
@@ -183,7 +183,7 @@ export class FormForm extends React.Component<IFormFormProps, any> {
 
     render() {
         let fields = [];
-        
+
         _.each(this.props.fields, (fieldConfig: IFieldConfig, index) => {
             let field, props, value;
 
@@ -241,7 +241,7 @@ export class FormForm extends React.Component<IFormFormProps, any> {
                     field = (
                         <Group {...props}>
                             <FormControl {...props} onFocus={this.handleOnFocus}/>
-                        </Group>                        
+                        </Group>
                     );
                     break;
                 case 'select':
@@ -267,19 +267,19 @@ export class FormForm extends React.Component<IFormFormProps, any> {
                                             <optgroup label={choice[0]} key={choice[0]}>
                                                 {choice[1].map((c: any[]) => {
                                                     return <option key={c[0]} value={c[0]}>{c[1]}</option>;
-                                                })}
+                                                }) }
                                             </optgroup>
                                         );
                                     }
                                     return <option key={choice[0]} value={choice[0]}>{choice[1]}</option>;
-                                })}
+                                }) }
                             </FormControl>
-                        </Group>                        
+                        </Group>
                     );
                     break;
                 case 'checkbox':
                     props.onClick = this.handleClick;
-                    props.onChange = () => {};
+                    props.onChange = () => { };
                     props.value = '';
                     field = (
                         <Checkbox {...props}>
