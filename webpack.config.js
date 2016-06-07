@@ -8,7 +8,7 @@ module.exports = {
         ]
     },
     output: {
-        path: path.join(__dirname, 'build'),
+        path: path.join(__dirname, 'dist'),
         publicPath: '/',
         filename: '[name].js',
         library: 'ReactBootstrapFormform',
