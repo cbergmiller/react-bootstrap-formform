@@ -24,10 +24,10 @@ interface IFieldConfig {
 interface IFormFormProps {
     fields: IFieldConfig[];
     values: any;
-    isHorizontal: boolean;
+    isHorizontal?: boolean;
     col1?: number;
     col2?: number;
-    isStatic: boolean;
+    isStatic?: boolean;
     onChange: (v: any) => void;
     onSubmit?: () => void;
     onFocus?: (name: string) => void;
