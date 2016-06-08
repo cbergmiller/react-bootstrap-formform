@@ -2,9 +2,10 @@
   "name": "react-bootstrap-formform",
   "version": "0.1.0",
   "description": "Dynamic form rendering with React-Bootstrap",
-  "main": "index.js",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
   "scripts": {
-    "build": "webpack",
+    "build": "tsc & webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

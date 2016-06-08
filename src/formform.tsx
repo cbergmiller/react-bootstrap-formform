@@ -1,5 +1,3 @@
-/// <reference path="typings/browser.d.ts" />
-
 import * as _ from 'underscore';
 import * as React from 'react';
 import SyntheticEvent = __React.SyntheticEvent;
@@ -9,7 +7,7 @@ import { Group } from './group';
 import { FileInput } from './fileinput';
 
 
-interface IFieldConfig {
+export interface IFieldConfig {
     type: string;
     name: string;
     label?: string;
@@ -21,8 +19,8 @@ interface IFieldConfig {
     validationState?: string;
 }
 
-interface IFormFormProps {
-    fields: IFieldConfig[];
+export interface IFormFormProps {
+    fields: Array<IFieldConfig>;
     values: any;
     isHorizontal?: boolean;
     col1?: number;
@@ -33,7 +31,7 @@ interface IFormFormProps {
     onFocus?: (name: string) => void;
 }
 
-class FormForm extends React.Component<IFormFormProps, any> {
+export class FormForm extends React.Component<IFormFormProps, any> {
     constructor(props: IFormFormProps) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
@@ -83,7 +81,7 @@ class FormForm extends React.Component<IFormFormProps, any> {
         field.validationState = null;
         return clonedFields;
     }
-    
+
     static getFieldByName(fields: IFieldConfig[], name: string): IFieldConfig {
         return _.find(fields, (field: IFieldConfig) => {
             return field.name === name;
@@ -128,7 +126,7 @@ class FormForm extends React.Component<IFormFormProps, any> {
         clonedValues[name] = newValue;
         this.props.onChange(clonedValues);
     }
-    
+
     handleSubmit(event: any): void {
         if (this.props.onSubmit) {
             event.preventDefault();
@@ -185,7 +183,7 @@ class FormForm extends React.Component<IFormFormProps, any> {
 
     render() {
         let fields = [];
-        
+
         _.each(this.props.fields, (fieldConfig: IFieldConfig, index) => {
             let field, props, value;
 
@@ -243,7 +241,7 @@ class FormForm extends React.Component<IFormFormProps, any> {
                     field = (
                         <Group {...props}>
                             <FormControl {...props} onFocus={this.handleOnFocus}/>
-                        </Group>                        
+                        </Group>
                     );
                     break;
                 case 'select':
@@ -269,19 +267,19 @@ class FormForm extends React.Component<IFormFormProps, any> {
                                             <optgroup label={choice[0]} key={choice[0]}>
                                                 {choice[1].map((c: any[]) => {
                                                     return <option key={c[0]} value={c[0]}>{c[1]}</option>;
-                                                })}
+                                                }) }
                                             </optgroup>
                                         );
                                     }
                                     return <option key={choice[0]} value={choice[0]}>{choice[1]}</option>;
-                                })}
+                                }) }
                             </FormControl>
-                        </Group>                        
+                        </Group>
                     );
                     break;
                 case 'checkbox':
                     props.onClick = this.handleClick;
-                    props.onChange = () => {};
+                    props.onChange = () => { };
                     props.value = '';
                     field = (
                         <Checkbox {...props}>
@@ -340,4 +338,4 @@ class FormForm extends React.Component<IFormFormProps, any> {
     }
 }
 
-export { FormForm, IFieldConfig, FileInput }
+export { FileInput }

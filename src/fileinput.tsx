@@ -6,7 +6,7 @@ import { Col, Glyphicon, FormGroup, ControlLabel, FormControl, InputGroup } from
 require('./less/fileinput.less');
 
 
-interface IFileInputProps {
+export interface IFileInputProps {
     name: String;
     value: any;
     onChange: (event: any) => void;
