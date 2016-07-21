@@ -13,5 +13,5 @@ export interface IGroupProps {
 }
 export declare class Group extends React.Component<IGroupProps, any> {
     constructor(props: any);
-    render(): JSX.Element;
+    render(): any;
 }

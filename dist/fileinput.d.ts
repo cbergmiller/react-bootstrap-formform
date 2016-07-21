@@ -12,5 +12,5 @@ export declare class FileInput extends React.Component<IFileInputProps, any> {
     clear(): void;
     onChange(e: any): void;
     proxyClick(): void;
-    render(): JSX.Element;
+    render(): any;
 }

@@ -105,11 +105,10 @@ export class FileInput extends React.Component<IFileInputProps, any> {
                                    ref={(c) => this._input = c} />
                             <input type="hidden" name={hiddenInputName} value={hiddenValue} />
                         </span>
-                        <a href="#"
-                           className="input-group-addon btn btn-default fileinput-exists"
-                           onClick={this.onClear}>
+                        <button className="input-group-addon btn btn-default fileinput-exists"
+                                onClick={this.onClear}>
                             <Glyphicon glyph="remove" />
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>

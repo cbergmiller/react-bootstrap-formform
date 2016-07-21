@@ -14,10 +14,10 @@ export interface IFieldConfig {
 export interface IFormFormProps {
     fields: Array<IFieldConfig>;
     values: any;
-    isHorizontal: boolean;
+    isHorizontal?: boolean;
     col1?: number;
     col2?: number;
-    isStatic: boolean;
+    isStatic?: boolean;
     onChange: (v: any) => void;
     onSubmit?: () => void;
     onFocus?: (name: string) => void;
@@ -39,6 +39,6 @@ export declare class FormForm extends React.Component<IFormFormProps, any> {
     handleOnFocus(event: any): void;
     static getChoiceDisplay(value: any, choices: any): any;
     static getMultiChoiceDisplay(values: any[], choices: any[][]): any;
-    render(): JSX.Element;
+    render(): any;
 }
 export { FileInput };
