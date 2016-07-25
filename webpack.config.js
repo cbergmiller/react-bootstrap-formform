@@ -5,7 +5,7 @@ module.exports = {
     entry: {
         index: [
             './index.js'
-        ]
+            ]
     },
     output: {
         path: path.join(__dirname, 'dist'),
@@ -38,10 +38,10 @@ module.exports = {
         loaders: [{
             test: /\.tsx?$/,
             exclude: /(node_modules)/,
-            loader: 'ts-loader'
+             loader: 'awesome-typescript-loader'
         }, {
             test: /\.less$/,
-            loader: 'style!css!less'
+             loader: 'style!css!less'
         }]
     },
     resolve: {
